@@ -3,10 +3,15 @@
 
 class Vikingo {
 	var property castaSocial = jarl
+	var property oro = 0
 	
 	method esProductivo()
 	
 	method puedeSubirA(expedicion) = self.esProductivo() and castaSocial.puedeIr(self,expedicion)
+
+	method ganar(monedas){
+		oro += monedas
+	}
 }
 
 class Expediciones {
@@ -27,6 +32,15 @@ class Expediciones {
 	method cantidadDeIntegrantesParaInvadir() = integrantes.size()
 	
 	method valeLaPena() = objetivos.all({objetivo => objetivo.valeLaPenaPara(self.cantidadDeIntegrantesParaInvadir())})
+
+	method realizar() {
+		objetivos.forEach({objetivo => objetivo.serInvadidoPor(self)})
+	}
+	
+	method repartirBotin(botin) {
+		integrantes.forEach({integrante => integrante.ganar(botin / self.cantidadDeIntegrantesParaInvadir())})
+	}
+
 }
 
 class Casta {
@@ -78,6 +92,11 @@ class Lugar {
 	method botin(cantInvasores)
 	method destruirse(cantInvasores)
 	
+	method serInvadidoPor(expedicion){
+		expedicion.repartirBotin(self.botin(expedicion.cantidadDeIntegrantesParaInvadir()))
+		self.destruirse(expedicion.cantidadDeIntegrantesParaInvadir())
+	}
+	
 }
 
 class Aldea inherits Lugar {
@@ -114,6 +133,14 @@ class Capital inherits Lugar {
 		defensores -= self.defensoresDerrotados(cantInvasores)
 	}
 }
+
+/*Si pueden agregarse castillos sin nungun inconveniente, se definiría un nuevo
+ * destino Castillo que hereda de Lugar, y simplemente tendria que entender los
+ * comportamientos que cualquier lugar tiene, y ademas comportamientos nuevos.
+ * 
+ * class Castillos inherits Lugar {
+ * 	y acá irían los mensajes que entiende un castillo
+ */
 
 
 
