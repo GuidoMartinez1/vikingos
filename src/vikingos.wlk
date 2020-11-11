@@ -12,6 +12,10 @@ class Vikingo {
 	method ganar(monedas){
 		oro += monedas
 	}
+	
+	method ascender(){
+		castaSocial.ascender(self)
+	}
 }
 
 class Expediciones {
@@ -51,13 +55,27 @@ object jarl inherits Casta {
 	
 	override method puedeIr(vikingo, expedicion) = not vikingo.tieneArmas()
 	
+	method ascender(vikingo){
+		vikingo.castaSocial(karl)
+		vikingo.bonificarAscenso()
+	}
+	
 }
 
 object karl {
 	
+	method ascender(vikingo){
+		vikingo.castaSocial(thrall)
+	}
+	
 }
 
 object thrall {
+	
+		method ascender(vikingo){
+		//no puede escalar mas
+	}
+	
 	
 }
 
@@ -73,6 +91,10 @@ class Soldado inherits Vikingo {
 	
 	override method esProductivo() = self.tieneArmas() and self.cobroMasDe20Vidas()
 	
+	method bonificarAscenso(){
+		armas += 10
+	}
+	
 }
 
 class Granjero inherits Vikingo {
@@ -82,6 +104,11 @@ class Granjero inherits Vikingo {
 	override method esProductivo() = hectareasDesignadas * 2 >= cantHijos
 	
 	method tieneArmas() = false
+	
+	method bonificarAscenso(){
+		cantHijos +=2
+		hectareasDesignadas += 2
+	}
 	
 }
 
