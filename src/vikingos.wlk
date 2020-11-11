@@ -1,7 +1,8 @@
-
+//1.Subir un vikingo a una expedición. Si no puede subir no debe hacerlo, y se debe avisar correspondientemente.
+//2.Saber si una expedición vale o no la pena.
 
 class Vikingo {
-	var castaSocial = jarl
+	var property castaSocial = jarl
 	
 	method esProductivo()
 	
@@ -11,6 +12,7 @@ class Vikingo {
 class Expediciones {
 	
 	const property integrantes = []
+	var objetivos = []
 	
 	method puedeSubir(vikingo) {
 		self.validarSiPuedeSubir(vikingo)
@@ -18,10 +20,13 @@ class Expediciones {
 		}
 		
 	method validarSiPuedeSubir(vikingo){
-			if(not vikingo.puedeSubirA(self)){
+			if(not vikingo.puedeSubirA(self))
 			self.error("No puede subir a la expedicion por no ser productivo")
-		}
 	}
+	
+	method cantidadDeIntegrantesParaInvadir() = integrantes.size()
+	
+	method valeLaPena() = objetivos.all({objetivo => objetivo.valeLaPenaPara(self.cantidadDeIntegrantesParaInvadir())})
 }
 
 class Casta {
@@ -64,9 +69,69 @@ class Granjero inherits Vikingo {
 	
 	method tieneArmas() = false
 	
+}
+
+//OBJETIVOS
+
+class Lugar {
 	
+	method botin(cantInvasores)
+	method destruirse(cantInvasores)
 	
 }
+
+class Aldea inherits Lugar {
+	var crucifijos
+	
+	override method botin(cantidadInvasores) = crucifijos
+	
+	method valeLaPenaPara(cantInvasores) = self.botin(cantInvasores) >= 15
+	
+	override method destruirse(cantInvasores){
+		crucifijos = 0
+	}
+	
+}
+
+class AldeaAmurallada inherits Aldea {
+	var minimaVikingos
+	
+	override method valeLaPenaPara(cantInvasores) = super(cantInvasores) and cantInvasores >= minimaVikingos
+}
+
+class Capital inherits Lugar {
+	
+	var property defensores
+	var riqueza
+	
+	method valeLaPenaPara(cantInvasores) = cantInvasores <= self.botin(cantInvasores) / 3
+	
+	override method botin(cantidadInvasores) = 	self.defensoresDerrotados(cantidadInvasores) * riqueza
+	
+	method defensoresDerrotados(invasores) = defensores.min(invasores)
+	
+	override method destruirse(cantInvasores){
+		defensores -= self.defensoresDerrotados(cantInvasores)
+	}
+}
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
